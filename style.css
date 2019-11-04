@@ -31,10 +31,14 @@
       -ms-flex: 300px 0 0px;
           flex: 300px 0 0;
   width: 700px;
-  border: 1px solid brown;
   margin-top: 50px;
   display: -ms-grid;
   display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
   -ms-grid-columns: (40px)[15];
       grid-template-columns: repeat(15, 40px);
   -ms-grid-rows: (40px)[5];
@@ -48,6 +52,7 @@
   color: blue;
   border: 1px solid green;
   border-radius: 5px;
+  outline: none;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -65,6 +70,10 @@
   cursor: pointer;
 }
 
+.keyboard__key_uppercase {
+  text-transform: uppercase;
+}
+
 .keyboard__key-backspace {
   -ms-grid-column: 14;
   -ms-grid-column-span: 2;
@@ -75,6 +84,22 @@
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-column: 1 / span 2;
+  position: relative;
+}
+
+.keyboard__key-capslock::after {
+  content: '';
+  top: 10px;
+  right: 10px;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+}
+
+.keyboard__key-capslock-on::after {
+  background: blue;
 }
 
 .keyboard__key-enter {
