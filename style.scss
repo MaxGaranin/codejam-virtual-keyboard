@@ -39,8 +39,14 @@
     align-items: center;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
+    transition-property: all;
+    transition-duration: 200ms;
     &:hover {
         cursor: pointer;
+    }
+    &_clicked {
+      background: gray;  
+      border-radius: 50%;
     }
     &_uppercase {
         text-transform: uppercase;
