@@ -7,101 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
+    <script src="scripts/languages.js"></script>
+    <script src="scripts/keyboard-generator.js"></script>
     <title>Codejem Virtual Keyboard</title>
 </head>
 
 <body>
-    <main class="main-container">
-        <textarea class="text-input"
-            autofocus>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea>
-        <div class="keyboard">
-            <button class="keyboard__key keyboard__key-print" id="Backquote">`</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit1">1</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit2">2</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit3">3</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit4">4</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit5">5</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit6">6</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit7">7</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit8">8</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit9">9</button>
-            <button class="keyboard__key keyboard__key-print" id="Digit0">0</button>
-            <button class="keyboard__key keyboard__key-print" id="Minus">-</button>
-            <button class="keyboard__key keyboard__key-print" id="Equal">=</button>
-            <button class="keyboard__key keyboard__key-backspace" id="Backspace">
-                <i class="material-icons">keyboard_backspace</i>
-            </button>
-            <button class="keyboard__key keyboard__key-print" id="Tab">Tab</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyQ">q</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyW">w</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyE">e</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyR">r</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyT">t</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyY">y</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyU">u</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyI">i</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyO">o</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyP">p</button>
-            <button class="keyboard__key keyboard__key-print" id="BracketLeft">[</button>
-            <button class="keyboard__key keyboard__key-print" id="BracketRight">]</button>
-            <button class="keyboard__key keyboard__key-print" id="Backslash">\</button>
-            <button class="keyboard__key keyboard__key-del" id="Delete">Del</button>
-            <button class="keyboard__key keyboard__key-capslock" id="CapsLock">
-                <i class="material-icons">keyboard_capslock</i>
-            </button>
-            <button class="keyboard__key keyboard__key-print" id="KeyA">a</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyS">s</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyD">d</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyF">f</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyG">g</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyH">h</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyJ">j</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyK">k</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyL">l</button>
-            <button class="keyboard__key keyboard__key-print" id="Semicolon">;</button>
-            <button class="keyboard__key keyboard__key-print" id="Quote">'</button>
-            <button class="keyboard__key keyboard__key-enter" id="Enter">
-                <i class="material-icons">keyboard_return</i>
-            </button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-shift keyboard__key-left-shift" id="ShiftLeft">
-                Shift
-            </button>
-            <button class="keyboard__key keyboard__key-print" id="KeyZ">z</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyX">x</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyC">c</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyV">v</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyB">b</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyN">n</button>
-            <button class="keyboard__key keyboard__key-print" id="KeyM">m</button>
-            <button class="keyboard__key keyboard__key-print" id="Comma">,</button>
-            <button class="keyboard__key keyboard__key-print" id="Period">.</button>
-            <button class="keyboard__key keyboard__key-print" id="Slash">/</button>
-            <button class="keyboard__key keyboard__key-arrow" id="ArrowUp">
-                <i class="material-icons">keyboard_arrow_up</i>
-            </button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-shift keyboard__key-right-shift" id="ShiftRight">
-                Shift
-            </button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-left-ctrl" id="ControlLeft">Ctrl</button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-left-win" id="MetaLeft">Win</button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-left-alt" id="AltLeft">Alt</button>
-            <button class="keyboard__key keyboard__key-space" id="Space"> </button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-right-alt" id="AltRight">Alt</button>
-            <button class="keyboard__key keyboard__key-arrow" id="ArrowLeft">
-                <i class="material-icons">keyboard_arrow_left</i>
-            </button>
-            <button class="keyboard__key keyboard__key-arrow" id="ArrowDown">
-                <i class="material-icons">keyboard_arrow_down</i>
-            </button>
-            <button class="keyboard__key keyboard__key-arrow" id="ArrowDown">
-                <i class="material-icons">keyboard_arrow_right</i>
-            </button>
-            <button class="keyboard__key keyboard__key-service keyboard__key-right-ctrl" id="ControlRight">Ctrl</button>
-        </div>
-    </main>
-
-    <script src="scripts/languages.js"></script>
-    <script src="scripts/keyboard.js"></script>
 </body>
 
 </html>

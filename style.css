@@ -32,6 +32,7 @@
           flex: 300px 0 0;
   width: 700px;
   margin-top: 50px;
+  border: 1px solid lightgray;
   display: -ms-grid;
   display: grid;
   -webkit-box-pack: center;
@@ -105,7 +106,7 @@
   border-radius: 50%;
 }
 
-.keyboard__key-capslock-on::after {
+.keyboard__key-capslock_on::after {
   background: blue;
 }
 

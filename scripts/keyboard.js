@@ -11,8 +11,8 @@ let currentLanguage = getLanguage();
 let isShiftPressed = false;
 
 document.addEventListener('keydown', (event) => {
-    const elem = document.getElementById(event.code);
-    if (elem) keyAnimateOn(elem);
+    const btn = document.getElementById(event.code);
+    if (btn) keyAnimateOn(btn);
 
     if (event.shiftKey && event.altKey) {
         toggleLanguage();
@@ -30,13 +30,13 @@ document.addEventListener('keydown', (event) => {
         onclickDelete();
     }
     else if (event.code === 'CapsLock') {
-        onclickCapsLock();
+        onclickCapsLock(btn);
     }
     else if (event.code.includes('Arrow')) {
         onclickArrow(event.code);
     }
     else {
-        onclickNormalSymbol(event.key);
+        onclickPrintableSymbol(event.key);
     }
 
     event.stopPropagation();
@@ -47,56 +47,56 @@ document.addEventListener('keyup', (event) => {
     if (elem) keyAnimateOff(elem);
 });
 
-document.querySelectorAll('.keyboard__key').forEach(keyBtn => {
+document.querySelectorAll('.keyboard__key').forEach(itemBtn => {
     changeKeysForLanguage();
 
-    keyBtn.addEventListener('mousedown', (event) => {
+    itemBtn.addEventListener('mousedown', (event) => {
         const elem = event.target;
         if (elem.classList.contains('keyboard__key-shift')) {
-            allKeys.forEach(keyButton => keyButton.classList.add('keyboard__key_uppercase'));
+            printableKeys.forEach(keyButton => keyButton.classList.add('keyboard__key_uppercase'));
             isShiftPressed = true;
         }
     });
 
-    keyBtn.addEventListener('mouseup', (event) => {
+    itemBtn.addEventListener('mouseup', (event) => {
         const elem = event.target;
         if (elem.classList.contains('keyboard__key-shift') && isShiftPressed) {
-            allKeys.forEach(keyButton => keyButton.classList.remove('keyboard__key_uppercase'));
+            printableKeys.forEach(keyButton => keyButton.classList.remove('keyboard__key_uppercase'));
             isShiftPressed = false;
         }
     });
 
-    keyBtn.addEventListener('click', (event) => {
-        const elem = event.currentTarget;
+    itemBtn.addEventListener('click', (event) => {
+        const btn = event.currentTarget;
 
-        keyAnimate(elem);
+        keyAnimate(btn);
 
-        if (elem.classList.contains('keyboard__key-service')) {
+        if (btn.classList.contains('keyboard__key-service')) {
             return;
         }
-        else if (elem.classList.contains('keyboard__key-enter')) {
+        else if (btn.classList.contains('keyboard__key-enter')) {
             onclickEnter();
         }
-        else if (elem.classList.contains('keyboard__key-backspace')) {
+        else if (btn.classList.contains('keyboard__key-backspace')) {
             onclickBackspace();
         }
-        else if (elem.classList.contains('keyboard__key-del')) {
+        else if (btn.classList.contains('keyboard__key-del')) {
             onclickDelete();
         }
-        else if (elem.classList.contains('keyboard__key-capslock')) {
-            onclickCapsLock();
+        else if (btn.classList.contains('keyboard__key-capslock')) {
+            onclickCapsLock(btn);
         }
-        else if (elem.classList.contains('keyboard__key-arrow')) {
-            onclickArrow(elem);
+        else if (btn.classList.contains('keyboard__key-arrow')) {
+            onclickArrow(btn);
         }
         else {
-            onclickNormalSymbol(elem.textContent);
+            onclickPrintableSymbol(btn.textContent);
         }
     });
 });
 
 function onclickDelete() {
-    let start = textInput.selectionStart;
+    const start = textInput.selectionStart;
     if (start < textInput.textContent.length) {
         textInput.textContent =
             textInput.textContent.slice(0, start) +
@@ -113,32 +113,32 @@ function onclickEnter() {
     textInput.textContent += '\r\n';
 }
 
-function onclickCapsLock() {
-    printableKeys.forEach(keyButton => {
-        keyButton.classList.toggle('keyboard__key_uppercase');
+function onclickCapsLock(capsLockBtn) {
+    printableKeys.forEach(btn => {
+        btn.classList.toggle('keyboard__key_uppercase');
     });
-    capsLockKey.classList.toggle('keyboard__key-capslock-on');
+    capsLockBtn.classList.toggle('keyboard__key-capslock_on');
 }
 
 function onclickArrow(elemId) {
     textInput.textContent += getPseudoSymbol(elemId);
 }
 
-function onclickNormalSymbol(symbol) {
+function onclickPrintableSymbol(symbol) {
     textInput.textContent += symbol;
 }
 
 //-------------------
 // Private functions
 
-const PSEUDO_KEYS = {
-    'ArrowUp': '▲',
-    'ArrowDown': '▼',
-    'ArrowLeft': '◀',
-    'ArrowRight': '▶',
-}
-
 function getPseudoSymbol(elemId) {
+    const PSEUDO_KEYS = {
+        'ArrowUp': '▲',
+        'ArrowDown': '▼',
+        'ArrowLeft': '◀',
+        'ArrowRight': '▶',
+    };
+
     let key = PSEUDO_KEYS[elemId];
     if (key) return key; else return '';
 }
@@ -153,8 +153,9 @@ function toggleLanguage() {
 }
 
 function changeKeysForLanguage() {
+    const lg = LANGUAGES[currentLanguage];
+
     document.querySelectorAll('.keyboard__key').forEach(keyBtn => {
-        const lg = LANGUAGES[currentLanguage];
         const key = lg[keyBtn.id];
         if (key) {
             keyBtn.innerHTML = key;
@@ -172,15 +173,15 @@ function saveLanguage() {
     localStorage.setItem('lang', currentLanguage);
 }
 
-function keyAnimate(elem) {
-    keyAnimateOn(elem);
-    setTimeout(() => keyAnimateOff(elem), 200);
+function keyAnimate(btn) {
+    keyAnimateOn(btn);
+    setTimeout(() => keyAnimateOff(btn), 200);
 }
 
-function keyAnimateOn(elem) {
-    elem.classList.add('keyboard__key_clicked');
+function keyAnimateOn(btn) {
+    btn.classList.add('keyboard__key_clicked');
 }
 
-function keyAnimateOff(elem) {
-    elem.classList.remove('keyboard__key_clicked');
+function keyAnimateOff(btn) {
+    btn.classList.remove('keyboard__key_clicked');
 }

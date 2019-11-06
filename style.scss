@@ -19,6 +19,7 @@
     flex: 300px 0 0 ;
     width: 700px;
     margin-top: 50px;
+    border: 1px solid lightgray;
     display: grid;
     justify-content: center;
     align-content: center;
@@ -66,7 +67,7 @@
             background: rgba(0, 0, 0, 0.4);
             border-radius: 50%;
         }
-        &-on::after {
+        &_on::after {
             background: blue
         }        
     }
