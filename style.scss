@@ -39,14 +39,13 @@
     align-items: center;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
-    transition-property: all;
-    transition-duration: 200ms;
+    transition: background-color 0.5s, border-radius 0.1s;
     &:hover {
         cursor: pointer;
     }
     &_clicked {
       background: gray;  
-      border-radius: 50%;
+      border-radius: 15px;
     }
     &_uppercase {
         text-transform: uppercase;

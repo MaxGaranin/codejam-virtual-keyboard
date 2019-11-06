@@ -11,7 +11,10 @@ let currentLanguage = getLanguage();
 let isShiftPressed = false;
 
 document.addEventListener('keydown', (event) => {
-    if (event.shiftKey && event.ctrlKey) {
+    const elem = document.getElementById(event.code);
+    if (elem) keyAnimateOn(elem);
+
+    if (event.shiftKey && event.altKey) {
         toggleLanguage();
     }
     else if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) {
@@ -35,9 +38,13 @@ document.addEventListener('keydown', (event) => {
     else {
         onclickNormalSymbol(event.key);
     }
+
+    event.stopPropagation();
 });
 
-document.addEventListener('keyup', () => {
+document.addEventListener('keyup', (event) => {
+    const elem = document.getElementById(event.code);
+    if (elem) keyAnimateOff(elem);
 });
 
 document.querySelectorAll('.keyboard__key').forEach(keyBtn => {
@@ -62,7 +69,7 @@ document.querySelectorAll('.keyboard__key').forEach(keyBtn => {
     keyBtn.addEventListener('click', (event) => {
         const elem = event.currentTarget;
 
-        animateClick(elem);
+        keyAnimate(elem);
 
         if (elem.classList.contains('keyboard__key-service')) {
             return;
@@ -99,21 +106,11 @@ function onclickDelete() {
 }
 
 function onclickBackspace() {
-    let start = textInput.selectionStart;
-    if (start > 0) {
-        textInput.textContent =
-            textInput.textContent.slice(0, start - 1) +
-            textInput.textContent.slice(start);
-        textInput.selectionStart = start - 1;
-    }
+    textInput.textContent = textInput.textContent.slice(0, textInput.textContent.length - 1);
 }
 
 function onclickEnter() {
-    let start = textInput.selectionStart;
-    textInput.textContent =
-        textInput.textContent.slice(0, start - 1) + '\r\n' +
-        textInput.textContent.slice(start);
-    textInput.selectionStart = start;
+    textInput.textContent += '\r\n';
 }
 
 function onclickCapsLock() {
@@ -175,7 +172,15 @@ function saveLanguage() {
     localStorage.setItem('lang', currentLanguage);
 }
 
-function animateClick(elem) {
+function keyAnimate(elem) {
+    keyAnimateOn(elem);
+    setTimeout(() => keyAnimateOff(elem), 200);
+}
+
+function keyAnimateOn(elem) {
     elem.classList.add('keyboard__key_clicked');
-    setTimeout(() => { elem.classList.remove('keyboard__key_clicked'); }, 200);
+}
+
+function keyAnimateOff(elem) {
+    elem.classList.remove('keyboard__key_clicked');
 }
