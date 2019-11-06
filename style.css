@@ -27,9 +27,9 @@
 }
 
 .keyboard {
-  -webkit-box-flex: 300px;
-      -ms-flex: 300px 0 0px;
-          flex: 300px 0 0;
+  -webkit-box-flex: 250px;
+      -ms-flex: 250px 0 0px;
+          flex: 250px 0 0;
   width: 700px;
   margin-top: 50px;
   border: 1px solid lightgray;
