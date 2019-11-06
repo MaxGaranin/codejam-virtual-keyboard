@@ -47,68 +47,38 @@ class Keyboard {
             // Event handlers
             itemBtn.addEventListener('mousedown', (event) => {
                 const btn = event.target;
-                if (btn.id.includes('Shift')) {
-                    this._switchShift(true);
+                if (this._isShiftKey(btn.id)) {
+                    this._switchShift(!this._isShiftPressed);
                 }
             });
 
             itemBtn.addEventListener('mouseup', (event) => {
                 const btn = event.target;
-                if (btn.id.includes('Shift')) {
-                    this._switchShift(false);
+                if (this._isShiftKey(btn.id)) {
+                    this._switchShift(!this._isShiftPressed);
                 }
             });
 
             itemBtn.addEventListener('click', (event) => {
                 const btn = event.currentTarget;
-
                 this._keyAnimate(btn);
 
-                if (btn.id === 'Enter') {
-                    this._onclickEnter();
-                }
-                else if (btn.id === 'Backspace') {
-                    this._onclickBackspace();
-                }
-                else if (btn.id === 'Delete') {
-                    this._onclickDelete();
-                }
-                else if (btn.id === 'CapsLock') {
-                    this._onclickCapsLock(btn);
-                }
-                else if (btn.id.includes('Arrow')) {
-                    this._onclickArrow(btn);
-                }
-                else if (btn.classList.contains('keyboard__key-printable')) {
-                    this._onclickPrintableSymbol(btn.textContent);
-                }
+                this._handleActivatedKey(btn, btn.id, btn.textContent);
             });
         }
 
         document.addEventListener('keydown', (event) => {
             const btn = document.getElementById(event.code);
-            if (btn) this._keyAnimateOn(btn);
+            this._keyAnimateOn(btn);
 
             if (event.shiftKey && event.altKey) {
                 this._toggleLanguage();
             }
-            else if (event.code === 'Enter') {
-                this._onclickEnter();
+            else if (this._isShiftKey(event.key)) {
+                this._switchShift(!this._isShiftPressed);
             }
-            else if (event.code === 'Backspace') {
-                this._onclickBackspace();
-            }
-            else if (event.code === 'Delete') {
-                this._onclickDelete();
-            }
-            else if (event.code === 'CapsLock') {
-                this._onclickCapsLock(btn);
-            }
-            else if (event.code.includes('Arrow')) {
-                this._onclickArrow(btn);
-            }
-            else if (btn.classList.contains('keyboard__key-printable')) {
-                this._onclickPrintableSymbol(event.key);
+            else {
+                this._handleActivatedKey(btn, event.code, event.key);
             }
 
             event.stopPropagation();
@@ -116,7 +86,11 @@ class Keyboard {
 
         document.addEventListener('keyup', (event) => {
             const btn = document.getElementById(event.code);
-            if (btn) this._keyAnimateOff(btn);
+            this._keyAnimateOff(btn);
+
+            if (this._isShiftKey(event.key)) {
+                this._switchShift(!this._isShiftPressed);
+            }
         });
     }
 
@@ -187,6 +161,31 @@ class Keyboard {
         { id: 'ControlRight', defaultKey: 'Ctrl', flags: [] },
     ];
 
+    _handleActivatedKey(btn, keyCode, keyValue) {
+        if (keyCode === 'Enter') {
+            this._onclickEnter();
+        }
+        else if (keyCode === 'Backspace') {
+            this._onclickBackspace();
+        }
+        else if (keyCode === 'Delete') {
+            this._onclickDelete();
+        }
+        else if (keyCode === 'CapsLock') {
+            this._onclickCapsLock(btn);
+        }
+        else if (keyCode.includes('Arrow')) {
+            this._onclickArrow(btn);
+        }
+        else if (btn.classList.contains('keyboard__key-printable')) {
+            this._onclickPrintableSymbol(keyValue);
+        }
+    }
+
+    _isShiftKey(keyValue) {
+        return keyValue.includes('Shift');
+    }
+
     _hasFlag(item, flag) {
         return (item.flags.includes(flag));
     }
@@ -246,7 +245,7 @@ class Keyboard {
     }
 
     _saveLanguage() {
-        localStorage.setItem('lang', currentLanguage);
+        localStorage.setItem('lang', this._currentLanguage);
     }
 
     _toggleLanguage() {
@@ -254,17 +253,23 @@ class Keyboard {
             ? 'Ru'
             : 'En'
 
-        this._changeKeysForLanguage();
+        this._readPrintableButtonKeys();
         this._saveLanguage();
     }
 
-    _changeKeysForLanguage() {
-        const lang = LANGUAGES[this._currentLanguage];
+    _readPrintableButtonKeys() {
+        const lang = LANGUAGES[this._currentLanguage + 
+            (this._isShiftPressed ? 'Shift' : '')];
 
-        document.querySelectorAll('.keyboard__key')
-            .forEach(btn => {
-                btn.textContent = lang[btn.id];
+        document.querySelectorAll('.keyboard__key-printable')
+            .forEach(printableBtn => {
+                printableBtn.textContent = lang[printableBtn.id];
             });
+    }
+
+    _switchShift(on) {
+        this._isShiftPressed = on;
+        this._readPrintableButtonKeys();
     }
 
     _keyAnimate(btn) {
@@ -278,17 +283,6 @@ class Keyboard {
 
     _keyAnimateOff(btn) {
         btn.classList.remove('keyboard__key_clicked');
-    }
-
-    _switchShift(on) {
-        const lang = LANGUAGES[`${this._currentLanguage + (on ? 'Shift' : '')}`];
-
-        document.querySelectorAll('.keyboard__key-printable')
-            .forEach(printableBtn => {
-                printableBtn.textContent = lang[printableBtn.id];
-            });
-
-        this._isShiftPressed = on;
     }
 
     _onclickDelete() {
