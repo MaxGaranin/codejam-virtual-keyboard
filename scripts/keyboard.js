@@ -8,8 +8,6 @@ class Keyboard {
     this._isShiftPressed = false;
     this._textInput = null;
     this._keyItems = [];
-
-    this.init();
   }
 
   init() {
@@ -40,9 +38,7 @@ class Keyboard {
         this._arrangeLargeButtons(itemBtn);
       }
 
-      itemBtn.textContent = item.defaultKey
-        ? item.defaultKey
-        : this._getLocalizedKey(item.id);
+      itemBtn.textContent = item.defaultKey || this._getLocalizedKey(item.id);
 
       if (this._hasFlag(item, 'isMaterialIcon')) {
         const htmlIcon = this._getMaterialIcon(item.id);
@@ -72,7 +68,7 @@ class Keyboard {
         const btn = event.currentTarget;
         this._keyAnimate(btn);
 
-        this._handleActivatedKey(btn, btn.id, btn.textContent);
+        this._handleActivatedKey(btn, btn.id);
       });
     });
 
@@ -85,10 +81,11 @@ class Keyboard {
       } else if (this._isShiftKey(event.key)) {
         this._switchShift(!this._isShiftPressed);
       } else {
-        this._handleActivatedKey(btn, event.code, event.key);
+        this._handleActivatedKey(btn, event.code);
       }
 
-      event.stopPropagation();
+      // event.stopPropagation();
+      event.preventDefault();
     });
 
     document.addEventListener('keyup', (event) => {
@@ -171,7 +168,7 @@ class Keyboard {
     this._keyItems = items;
   }
 
-  _handleActivatedKey(btn, keyCode, keyValue) {
+  _handleActivatedKey(btn, keyCode) {
     if (keyCode === 'Enter') {
       this._onclickEnter();
     } else if (keyCode === 'Backspace') {
@@ -183,7 +180,7 @@ class Keyboard {
     } else if (keyCode.includes('Arrow')) {
       this._onclickArrow(btn);
     } else if (btn.classList.contains('keyboard__key-printable')) {
-      this._onclickPrintableSymbol(keyValue);
+      this._onclickPrintableSymbol(keyCode);
     }
   }
 
@@ -257,6 +254,7 @@ class Keyboard {
     this._currentLanguage = this._currentLanguage === 'En'
       ? 'Ru'
       : 'En';
+    this._currentLanguageKeys = LANGUAGES[this._currentLanguage];
 
     this._readPrintableButtonKeys();
     this._saveLanguage();
@@ -264,7 +262,7 @@ class Keyboard {
 
   _readPrintableButtonKeys() {
     const lang = LANGUAGES[this._currentLanguage
-            + (this._isShiftPressed ? 'Shift' : '')];
+      + (this._isShiftPressed ? 'Shift' : '')];
 
     document.querySelectorAll('.keyboard__key-printable')
       .forEach((printableBtn) => {
@@ -284,6 +282,9 @@ class Keyboard {
   }
 
   _keyAnimateOn(btn) {
+    if (!btn) {
+      debugger;
+    }
     btn.classList.add('keyboard__key_clicked');
   }
 
@@ -293,20 +294,20 @@ class Keyboard {
 
   _onclickDelete() {
     const start = this._textInput.selectionStart;
-    if (start < this._textInput.textContent.length) {
-      this._textInput.textContent = this._textInput.textContent.slice(0, start)
-                + this._textInput.textContent.slice(start + 1);
+    if (start < this._textInput.value.length) {
+      this._textInput.value = this._textInput.value.slice(0, start)
+        + this._textInput.value.slice(start + 1);
       this._textInput.selectionStart = start;
     }
   }
 
   _onclickBackspace() {
-    this._textInput.textContent = this._textInput.textContent
-      .slice(0, this._textInput.textContent.length - 1);
+    this._textInput.value = this._textInput.value
+      .slice(0, this._textInput.value.length - 1);
   }
 
   _onclickEnter() {
-    this._textInput.textContent += '\r\n';
+    this._textInput.value += '\r\n';
   }
 
   _onclickCapsLock(capsLockBtn) {
@@ -315,15 +316,16 @@ class Keyboard {
   }
 
   _onclickArrow(btn) {
-    this._textInput.textContent += this._getPseudoSymbol(btn.id);
+    this._textInput.value += this._getPseudoSymbol(btn.id);
   }
 
-  _onclickPrintableSymbol(symbol) {
-    this._textInput.textContent += symbol;
+  _onclickPrintableSymbol(keyCode) {
+    const symbol = this._getLocalizedKey(keyCode);
+    this._textInput.value += symbol;
   }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  // eslint-disable-next-line no-unused-vars
   const keyboard = new Keyboard();
+  keyboard.init();
 });
