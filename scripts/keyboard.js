@@ -1,22 +1,24 @@
-// eslint-disable-next-line import/extensions
+/* eslint-disable import/extensions */
+import KEY_ITEMS from './constants.js';
 import LANGUAGES from './languages.js';
 
 class Keyboard {
   constructor() {
     this._currentLanguage = 'En';
     this._currentLanguageKeys = [];
-    this._isShiftPressed = false;
-    this._textInput = null;
+    this._textInput = '';
     this._keyItems = [];
+    this._isUpperCase = false;
+    this._isCapsLockOn = false;
+    this._isShiftOn = false;
   }
 
   init() {
-    this._initKeyItems();
+    this._keyItems = KEY_ITEMS;
     this._initLanguage();
 
     const main = document.createElement('main');
     main.className = 'main-container';
-    document.body.append(main);
 
     const textInput = document.createElement('textarea');
     textInput.className = 'text-input';
@@ -53,14 +55,16 @@ class Keyboard {
       itemBtn.addEventListener('mousedown', (event) => {
         const btn = event.target;
         if (this._isShiftKey(btn.id)) {
-          this._switchShift(!this._isShiftPressed);
+          this._isShiftOn = true;
+          this._switchUpperCase();
         }
       });
 
       itemBtn.addEventListener('mouseup', (event) => {
         const btn = event.target;
         if (this._isShiftKey(btn.id)) {
-          this._switchShift(!this._isShiftPressed);
+          this._isShiftOn = false;
+          this._switchUpperCase();
         }
       });
 
@@ -79,12 +83,12 @@ class Keyboard {
       if (event.shiftKey && event.altKey) {
         this._toggleLanguage();
       } else if (this._isShiftKey(event.key)) {
-        this._switchShift(!this._isShiftPressed);
+        this._isShiftOn = true;
+        this._switchUpperCase();
       } else {
         this._handleActivatedKey(btn, event.code);
       }
 
-      // event.stopPropagation();
       event.preventDefault();
     });
 
@@ -93,80 +97,15 @@ class Keyboard {
       this._keyAnimateOff(btn);
 
       if (this._isShiftKey(event.key)) {
-        this._switchShift(!this._isShiftPressed);
+        this._isShiftOn = false;
+        this._switchUpperCase();
       }
     });
+
+    document.body.append(main);
   }
 
-  _initKeyItems() {
-    const items = [
-      { id: 'Backquote', flags: ['isPrintable'] },
-      { id: 'Digit1', flags: ['isPrintable'] },
-      { id: 'Digit2', flags: ['isPrintable'] },
-      { id: 'Digit3', flags: ['isPrintable'] },
-      { id: 'Digit4', flags: ['isPrintable'] },
-      { id: 'Digit5', flags: ['isPrintable'] },
-      { id: 'Digit6', flags: ['isPrintable'] },
-      { id: 'Digit7', flags: ['isPrintable'] },
-      { id: 'Digit8', flags: ['isPrintable'] },
-      { id: 'Digit9', flags: ['isPrintable'] },
-      { id: 'Digit0', flags: ['isPrintable'] },
-      { id: 'Minus', flags: ['isPrintable'] },
-      { id: 'Equal', flags: ['isPrintable'] },
-      { id: 'Backspace', defaultKey: 'Backspace', flags: ['isMaterialIcon', 'isLargeBtn'] },
-      { id: 'Tab', defaultKey: 'Tab', flags: [] },
-      { id: 'KeyQ', flags: ['isPrintable'] },
-      { id: 'KeyW', flags: ['isPrintable'] },
-      { id: 'KeyE', flags: ['isPrintable'] },
-      { id: 'KeyR', flags: ['isPrintable'] },
-      { id: 'KeyT', flags: ['isPrintable'] },
-      { id: 'KeyY', flags: ['isPrintable'] },
-      { id: 'KeyU', flags: ['isPrintable'] },
-      { id: 'KeyI', flags: ['isPrintable'] },
-      { id: 'KeyO', flags: ['isPrintable'] },
-      { id: 'KeyP', flags: ['isPrintable'] },
-      { id: 'BracketLeft', flags: ['isPrintable'] },
-      { id: 'BracketRight', flags: ['isPrintable'] },
-      { id: 'Backslash', flags: ['isPrintable'] },
-      { id: 'Delete', defaultKey: 'Del', flags: [] },
-      { id: 'CapsLock', defaultKey: 'CapsLock', flags: ['isMaterialIcon', 'isLargeBtn'] },
-      { id: 'KeyA', flags: ['isPrintable'] },
-      { id: 'KeyS', flags: ['isPrintable'] },
-      { id: 'KeyD', flags: ['isPrintable'] },
-      { id: 'KeyF', flags: ['isPrintable'] },
-      { id: 'KeyG', flags: ['isPrintable'] },
-      { id: 'KeyH', flags: ['isPrintable'] },
-      { id: 'KeyJ', flags: ['isPrintable'] },
-      { id: 'KeyK', flags: ['isPrintable'] },
-      { id: 'KeyL', flags: ['isPrintable'] },
-      { id: 'Semicolon', flags: ['isPrintable'] },
-      { id: 'Quote', flags: ['isPrintable'] },
-      { id: 'Enter', defaultKey: 'Enter', flags: ['isMaterialIcon', 'isLargeBtn'] },
-      { id: 'ShiftLeft', defaultKey: 'Shift', flags: ['isLargeBtn'] },
-      { id: 'KeyZ', flags: ['isPrintable'] },
-      { id: 'KeyX', flags: ['isPrintable'] },
-      { id: 'KeyC', flags: ['isPrintable'] },
-      { id: 'KeyV', flags: ['isPrintable'] },
-      { id: 'KeyB', flags: ['isPrintable'] },
-      { id: 'KeyN', flags: ['isPrintable'] },
-      { id: 'KeyM', flags: ['isPrintable'] },
-      { id: 'Comma', flags: ['isPrintable'] },
-      { id: 'Period', flags: ['isPrintable'] },
-      { id: 'Slash', flags: ['isPrintable'] },
-      { id: 'ArrowUp', flags: ['isMaterialIcon'] },
-      { id: 'ShiftRight', defaultKey: 'Shift', flags: ['isLargeBtn'] },
-      { id: 'ControlLeft', defaultKey: 'Ctrl', flags: [] },
-      { id: 'MetaLeft', defaultKey: 'Win', flags: [] },
-      { id: 'AltLeft', defaultKey: 'Alt', flags: [] },
-      { id: 'Space', flags: ['isLargeBtn'] },
-      { id: 'AltRight', defaultKey: 'Alt', flags: [] },
-      { id: 'ArrowLeft', flags: ['isMaterialIcon'] },
-      { id: 'ArrowDown', flags: ['isMaterialIcon'] },
-      { id: 'ArrowRight', flags: ['isMaterialIcon'] },
-      { id: 'ControlRight', defaultKey: 'Ctrl', flags: [] },
-    ];
-    this._keyItems = items;
-  }
+  // Methods
 
   _handleActivatedKey(btn, keyCode) {
     if (keyCode === 'Enter') {
@@ -232,7 +171,10 @@ class Keyboard {
   }
 
   _getLocalizedKey(keyId) {
-    return this._currentLanguageKeys[keyId];
+    const lang = LANGUAGES[this._currentLanguage
+      + (this._isUpperCase ? 'Shift' : '')];
+
+    return lang[keyId];
   }
 
   _initLanguage() {
@@ -262,7 +204,7 @@ class Keyboard {
 
   _readPrintableButtonKeys() {
     const lang = LANGUAGES[this._currentLanguage
-      + (this._isShiftPressed ? 'Shift' : '')];
+      + (this._isUpperCase ? 'Shift' : '')];
 
     document.querySelectorAll('.keyboard__key-printable')
       .forEach((printableBtn) => {
@@ -271,9 +213,13 @@ class Keyboard {
       });
   }
 
-  _switchShift(on) {
-    this._isShiftPressed = on;
-    this._readPrintableButtonKeys();
+  _switchUpperCase() {
+    const prevIsUpperCase = this._isUpperCase;
+    this._isUpperCase = this._isShiftOn !== this._isCapsLockOn;
+
+    if (prevIsUpperCase !== this._isUpperCase) {
+      this._readPrintableButtonKeys();
+    }
   }
 
   _keyAnimate(btn) {
@@ -282,9 +228,6 @@ class Keyboard {
   }
 
   _keyAnimateOn(btn) {
-    if (!btn) {
-      debugger;
-    }
     btn.classList.add('keyboard__key_clicked');
   }
 
@@ -311,8 +254,9 @@ class Keyboard {
   }
 
   _onclickCapsLock(capsLockBtn) {
-    this._switchShift(!this._isShiftPressed);
+    this._isCapsLockOn = !this._isCapsLockOn;
     capsLockBtn.classList.toggle('keyboard__key-capslock_on');
+    this._switchUpperCase();
   }
 
   _onclickArrow(btn) {
