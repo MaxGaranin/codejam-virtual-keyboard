@@ -1,4 +1,5 @@
-const EN = {
+/* eslint-disable import/extensions */
+const EN_LAYOUT = {
   Backquote: '`',
   Digit1: '1',
   Digit2: '2',
@@ -48,7 +49,7 @@ const EN = {
   Slash: '/',
 };
 
-const EN_SHIFT = {
+const EN_UPPER_LAYOUT = {
   Backquote: '~',
   Digit1: '!',
   Digit2: '@',
@@ -98,7 +99,7 @@ const EN_SHIFT = {
   Slash: '?',
 };
 
-const RU = {
+const RU_LAYOUT = {
   Backquote: 'ё',
   Digit1: '1',
   Digit2: '2',
@@ -148,7 +149,7 @@ const RU = {
   Slash: '.',
 };
 
-const RU_SHIFT = {
+const RU_UPPER_LAYOUT = {
   Backquote: 'Ё',
   Digit1: '!',
   Digit2: '"',
@@ -199,8 +200,8 @@ const RU_SHIFT = {
 };
 
 export default {
-  En: EN,
-  EnShift: EN_SHIFT,
-  Ru: RU,
-  RuShift: RU_SHIFT,
+  'En' : EN_LAYOUT,
+  'EnUpper' : EN_UPPER_LAYOUT,
+  'Ru' : RU_LAYOUT,
+  'RuUpper' : RU_UPPER_LAYOUT,
 };

@@ -1,6 +1,11 @@
 /* eslint-disable import/extensions */
 import KEY_ITEMS from './constants.js';
-import LANGUAGES from './languages.js';
+import KEYBOARD_LAYOUTS from './keyboardLayouts.js';
+
+const RU = 'Ru';
+const EN = 'En';
+const UPPER = 'Upper';
+const LANGUAGE_SETTINGS_KEY = 'lang';
 
 class Keyboard {
   constructor() {
@@ -14,8 +19,7 @@ class Keyboard {
   }
 
   init() {
-    this._keyItems = KEY_ITEMS;
-    this._initLanguage();
+    this._readSettings();
 
     const main = document.createElement('main');
     main.className = 'main-container';
@@ -28,6 +32,8 @@ class Keyboard {
     const keyboardDiv = document.createElement('div');
     keyboardDiv.className = 'keyboard';
     main.append(keyboardDiv);
+
+    this._keyItems = KEY_ITEMS;
 
     this._keyItems.forEach((item) => {
       const itemBtn = document.createElement('button');
@@ -171,45 +177,27 @@ class Keyboard {
   }
 
   _getLocalizedKey(keyId) {
-    const lang = LANGUAGES[this._currentLanguage
-      + (this._isUpperCase ? 'Shift' : '')];
-
-    return lang[keyId];
+    const layout = this._getCurrentLayout();
+    return layout[keyId];
   }
 
-  _initLanguage() {
-    this._currentLanguage = this._getLanguage();
-    this._currentLanguageKeys = LANGUAGES[this._currentLanguage];
-  }
-
-  _getLanguage() {
-    let lang = localStorage.getItem('lang');
-    if (!lang) lang = 'En';
-    return lang;
-  }
-
-  _saveLanguage() {
-    localStorage.setItem('lang', this._currentLanguage);
+  _getCurrentLayout() {
+    return KEYBOARD_LAYOUTS[this._currentLanguage + (this._isUpperCase ? UPPER : '')];
   }
 
   _toggleLanguage() {
-    this._currentLanguage = this._currentLanguage === 'En'
-      ? 'Ru'
-      : 'En';
-    this._currentLanguageKeys = LANGUAGES[this._currentLanguage];
-
+    this._currentLanguage = this._currentLanguage === EN ? RU : EN;
     this._readPrintableButtonKeys();
-    this._saveLanguage();
+    this._saveSettings();
   }
 
   _readPrintableButtonKeys() {
-    const lang = LANGUAGES[this._currentLanguage
-      + (this._isUpperCase ? 'Shift' : '')];
+    const layout = this._getCurrentLayout();
 
     document.querySelectorAll('.keyboard__key-printable')
       .forEach((printableBtn) => {
         // eslint-disable-next-line no-param-reassign
-        printableBtn.textContent = lang[printableBtn.id];
+        printableBtn.textContent = layout[printableBtn.id];
       });
   }
 
@@ -266,6 +254,16 @@ class Keyboard {
   _onclickPrintableSymbol(keyCode) {
     const symbol = this._getLocalizedKey(keyCode);
     this._textInput.value += symbol;
+  }
+
+  _readSettings() {
+    let lang = localStorage.getItem(LANGUAGE_SETTINGS_KEY);
+    if (!lang) lang = EN;
+    this._currentLanguage = lang;
+  }
+
+  _saveSettings() {
+    localStorage.setItem(LANGUAGE_SETTINGS_KEY, this._currentLanguage);
   }
 }
 
