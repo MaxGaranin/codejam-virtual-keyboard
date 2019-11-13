@@ -200,8 +200,8 @@ const RU_UPPER_LAYOUT = {
 };
 
 export default {
-  'En' : EN_LAYOUT,
-  'EnUpper' : EN_UPPER_LAYOUT,
-  'Ru' : RU_LAYOUT,
-  'RuUpper' : RU_UPPER_LAYOUT,
+  En: EN_LAYOUT,
+  EnUpper: EN_UPPER_LAYOUT,
+  Ru: RU_LAYOUT,
+  RuUpper: RU_UPPER_LAYOUT,
 };

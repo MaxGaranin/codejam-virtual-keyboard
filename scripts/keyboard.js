@@ -84,6 +84,7 @@ class Keyboard {
 
     document.addEventListener('keydown', (event) => {
       const btn = document.getElementById(event.code);
+      if (!btn) return;
       this._keyAnimateOn(btn);
 
       if (event.shiftKey && event.altKey) {
@@ -100,6 +101,7 @@ class Keyboard {
 
     document.addEventListener('keyup', (event) => {
       const btn = document.getElementById(event.code);
+      if (!btn) return;
       this._keyAnimateOff(btn);
 
       if (this._isShiftKey(event.key)) {
