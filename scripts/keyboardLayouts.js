@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 const EN_LAYOUT = {
   Backquote: '`',
   Digit1: '1',

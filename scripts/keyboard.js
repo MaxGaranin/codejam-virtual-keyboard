@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import KEY_ITEMS from './constants.js';
 import KEYBOARD_LAYOUTS from './keyboardLayouts.js';
 
@@ -21,17 +20,8 @@ class Keyboard {
   init() {
     this._readSettings();
 
-    const main = document.createElement('main');
-    main.className = 'main-container';
-
-    const textInput = document.createElement('textarea');
-    textInput.className = 'text-input';
-    main.append(textInput);
-    this._textInput = textInput;
-
     const keyboardDiv = document.createElement('div');
     keyboardDiv.className = 'keyboard';
-    main.append(keyboardDiv);
 
     this._keyItems = KEY_ITEMS;
 
@@ -110,10 +100,24 @@ class Keyboard {
       }
     });
 
+    const main = this._createMainContainer();
+    main.append(keyboardDiv);
     document.body.append(main);
   }
 
   // Methods
+
+  _createMainContainer() {
+    const main = document.createElement('main');
+    main.className = 'main-container';
+
+    const textInput = document.createElement('textarea');
+    textInput.className = 'text-input';
+    main.append(textInput);
+    this._textInput = textInput;
+
+    return main;
+  }
 
   _handleActivatedKey(btn, keyCode) {
     if (keyCode === 'Enter') {
