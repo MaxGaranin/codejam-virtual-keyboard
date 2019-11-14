@@ -6,6 +6,10 @@ const EN = 'En';
 const UPPER = 'Upper';
 const LANGUAGE_SETTINGS_KEY = 'lang';
 
+const PRINTABLE_FLAG = 'isPrintable';
+const MATERIAL_ICON_FLAG = 'isMaterialIcon';
+const LARGE_BUTTON_FLAG = 'isLargeBtn';
+
 class Keyboard {
   constructor() {
     this._currentLanguage = 'En';
@@ -25,27 +29,15 @@ class Keyboard {
 
     this._keyItems = KEY_ITEMS;
 
-    this._keyItems.forEach((item) => {
+    Object.entries(this._keyItems).forEach(([itemKey, itemValue]) => {
       const itemBtn = document.createElement('button');
       keyboardDiv.append(itemBtn);
 
-      itemBtn.id = item.id;
+      itemBtn.id = itemKey;
       itemBtn.classList.add('keyboard__key');
+      itemBtn.textContent = itemValue.defaultKey || this._getLayoutKey(itemKey);
 
-      if (this._hasFlag(item, 'isLargeBtn')) {
-        this._arrangeLargeButtons(itemBtn);
-      }
-
-      itemBtn.textContent = item.defaultKey || this._getLayoutKey(item.id);
-
-      if (this._hasFlag(item, 'isMaterialIcon')) {
-        const htmlIcon = this._getMaterialIcon(item.id);
-        itemBtn.innerHTML = htmlIcon;
-      }
-
-      if (this._hasFlag(item, 'isPrintable')) {
-        itemBtn.classList.add('keyboard__key-printable');
-      }
+      this._adjustButtonsAppearance(itemKey, itemValue, itemBtn);
     });
 
     this._addEventHandlers(keyboardDiv);
@@ -119,18 +111,6 @@ class Keyboard {
     });
   }
 
-  _createMainContainer() {
-    const main = document.createElement('main');
-    main.className = 'main-container';
-
-    const textInput = document.createElement('textarea');
-    textInput.className = 'text-input';
-    main.append(textInput);
-    this._textInput = textInput;
-
-    return main;
-  }
-
   _handleActivatedKey(btn, keyCode) {
     if (keyCode === 'Enter') {
       this._onclickEnter();
@@ -147,12 +127,51 @@ class Keyboard {
     }
   }
 
-  _isShiftKey(keyValue) {
-    return keyValue.includes('Shift');
+  _createMainContainer() {
+    const main = document.createElement('main');
+    main.className = 'main-container';
+
+    const textInput = document.createElement('textarea');
+    textInput.className = 'text-input';
+    main.append(textInput);
+    this._textInput = textInput;
+
+    return main;
   }
 
-  _hasFlag(item, flag) {
-    return (item.flags.includes(flag));
+  _adjustButtonsAppearance(itemKey, itemValue, itemBtn) {
+    if (this._isLargeButtonKey(itemValue)) {
+      this._arrangeLargeButtons(itemBtn);
+    }
+
+    if (this._isMaterialIconKey(itemValue)) {
+      const htmlIcon = this._getMaterialIcon(itemKey);
+      itemBtn.innerHTML = htmlIcon;
+    }
+
+    if (this._isPrintableKey(itemValue)) {
+      itemBtn.classList.add('keyboard__key-printable');
+    }
+  }
+
+  _isPrintableKey(itemValue) {
+    return this._hasFlag(itemValue, PRINTABLE_FLAG);
+  }
+
+  _isMaterialIconKey(itemValue) {
+    return this._hasFlag(itemValue, MATERIAL_ICON_FLAG);
+  }
+
+  _isLargeButtonKey(itemValue) {
+    return this._hasFlag(itemValue, LARGE_BUTTON_FLAG);
+  }
+
+  _isShiftKey(keyCode) {
+    return keyCode.includes('Shift');
+  }
+
+  _hasFlag(itemValue, flag) {
+    return (itemValue.flags.includes(flag));
   }
 
   _getMaterialIcon(keyId) {
@@ -214,7 +233,6 @@ class Keyboard {
 
     document.querySelectorAll('.keyboard__key-printable')
       .forEach((printableBtn) => {
-        // eslint-disable-next-line no-param-reassign
         printableBtn.textContent = layout[printableBtn.id];
       });
   }
