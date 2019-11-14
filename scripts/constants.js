@@ -167,6 +167,17 @@ const RU_LAYOUT = {
   Space: { normal: ' ', upper: ' ' },
 };
 
+export const CAPS_LOCK = 'CapsLock';
+export const ENTER = 'Enter';
+export const BACKSPACE = 'Backspace';
+export const ARROW_UP = 'ArrowUp';
+export const ARROW_DOWN = 'ArrowDown';
+export const ARROW_LEFT = 'ArrowLeft';
+export const ARROW_RIGHT = 'ArrowRight';
+export const SHIFT_LEFT = 'ShiftLeft';
+export const SHIFT_RIGHT = 'ShiftRight';
+export const SPACE = 'Space';
+
 export const EN = 'En';
 export const RU = 'Ru';
 export const NORMAL = 'normal';

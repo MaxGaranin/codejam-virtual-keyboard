@@ -1,5 +1,7 @@
 import {
   KEY_ITEMS, LAYOUTS, EN, RU, NORMAL, UPPER,
+  CAPS_LOCK, ENTER, BACKSPACE, SHIFT_LEFT, SHIFT_RIGHT,
+  ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, SPACE,
 } from './constants.js';
 
 const LANGUAGE_SETTINGS_KEY = 'codejam-keyboard';
@@ -7,6 +9,11 @@ const LANGUAGE_SETTINGS_KEY = 'codejam-keyboard';
 const PRINTABLE_FLAG = 'isPrintable';
 const MATERIAL_ICON_FLAG = 'isMaterialIcon';
 const LARGE_BUTTON_FLAG = 'isLargeBtn';
+
+const KEYBOARD_CLASS = 'keyboard';
+const KEY_CLASS = 'keyboard__key';
+const PRINTABLE_KEY_CLASS = 'keyboard__key-printable';
+const CAPSLOCK_ON_KEY_CLASS = 'keyboard__key-capslock_on';
 
 class Keyboard {
   constructor() {
@@ -179,7 +186,7 @@ class Keyboard {
   }
 
   _updateKeyboard() {
-    const prevKeyboard = document.querySelector('.keyboard');
+    const prevKeyboard = document.querySelector(`.${KEYBOARD_CLASS}`);
     if (prevKeyboard) prevKeyboard.remove();
 
     const keyboard = this._createKeyboard();
@@ -188,14 +195,14 @@ class Keyboard {
 
   _createKeyboard() {
     const keyboard = document.createElement('div');
-    keyboard.className = 'keyboard';
+    keyboard.className = KEYBOARD_CLASS;
 
     Object.entries(KEY_ITEMS).forEach(([itemKey, itemValue]) => {
       const itemBtn = document.createElement('button');
       keyboard.append(itemBtn);
 
       itemBtn.id = itemKey;
-      itemBtn.classList.add('keyboard__key');
+      itemBtn.classList.add(KEY_CLASS);
       itemBtn.textContent = itemValue.defaultKey || this._getKey(itemKey);
 
       this._adjustButtonsAppearance(itemKey, itemValue, itemBtn);
@@ -216,14 +223,14 @@ class Keyboard {
       itemBtn.innerHTML = htmlIcon;
     }
 
-    if (itemKey === 'CapsLock') {
+    if (itemKey === CAPS_LOCK) {
       if (this._isCapsLockOn) {
-        itemBtn.classList.add('keyboard__key-capslock_on');
+        itemBtn.classList.add(CAPSLOCK_ON_KEY_CLASS);
       }
     }
 
     if (this._isPrintableKey(itemValue)) {
-      itemBtn.classList.add('keyboard__key-printable');
+      itemBtn.classList.add(PRINTABLE_KEY_CLASS);
     }
   }
 
@@ -240,7 +247,7 @@ class Keyboard {
   }
 
   _isShiftKey(keyCode) {
-    return keyCode.includes('Shift');
+    return keyCode === SHIFT_LEFT || keyCode === SHIFT_RIGHT;
   }
 
   _hasFlag(itemValue, flag) {
@@ -249,13 +256,13 @@ class Keyboard {
 
   _getMaterialIcon(keyId) {
     const codes = {
-      Backspace: 'keyboard_backspace',
-      CapsLock: 'keyboard_capslock',
-      Enter: 'keyboard_return',
-      ArrowUp: 'keyboard_arrow_up',
-      ArrowRight: 'keyboard_arrow_right',
-      ArrowLeft: 'keyboard_arrow_left',
-      ArrowDown: 'keyboard_arrow_down',
+      [BACKSPACE]: 'keyboard_backspace',
+      [CAPS_LOCK]: 'keyboard_capslock',
+      [ENTER]: 'keyboard_return',
+      [ARROW_UP]: 'keyboard_arrow_up',
+      [ARROW_DOWN]: 'keyboard_arrow_down',
+      [ARROW_LEFT]: 'keyboard_arrow_left',
+      [ARROW_RIGHT]: 'keyboard_arrow_right',
     };
 
     return `<i class="material-icons">${codes[keyId]}</i>`;
@@ -263,23 +270,23 @@ class Keyboard {
 
   _arrangeLargeButtons(itemBtn) {
     const map = {
-      Backspace: '-backspace',
-      CapsLock: '-capslock',
-      Enter: '-enter',
-      ShiftLeft: '-left-shift',
-      Space: '-space',
-      ShiftRight: '-right-shift',
+      [BACKSPACE]: '-backspace',
+      [CAPS_LOCK]: '-capslock',
+      [ENTER]: '-enter',
+      [SHIFT_LEFT]: '-left-shift',
+      [SPACE]: '-space',
+      [SHIFT_RIGHT]: '-right-shift',
     };
 
-    itemBtn.classList.add(`keyboard__key${map[itemBtn.id]}`);
+    itemBtn.classList.add(`${KEY_CLASS}${map[itemBtn.id]}`);
   }
 
   _getPseudoSymbol(btnId) {
     const PSEUDO_KEYS = {
-      ArrowUp: '▲',
-      ArrowDown: '▼',
-      ArrowLeft: '◀',
-      ArrowRight: '▶',
+      [ARROW_UP]: '▲',
+      [ARROW_DOWN]: '▼',
+      [ARROW_LEFT]: '◀',
+      [ARROW_RIGHT]: '▶',
     };
 
     const key = PSEUDO_KEYS[btnId];
@@ -303,14 +310,6 @@ class Keyboard {
   _getKey(keyId) {
     const prop = this._getLayoutProp();
     return this._currentLayout[keyId][prop];
-  }
-
-  _readPrintableButtonKeys() {
-    document.querySelectorAll('.keyboard__key-printable')
-      .forEach((btn) => {
-        const key = this._getKey(btn.id, this._currentLayout);
-        btn.textContent = key;
-      });
   }
 
   _calcIsUpperCase() {
