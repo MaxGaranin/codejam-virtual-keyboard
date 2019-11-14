@@ -1,7 +1,20 @@
 import {
-  KEY_ITEMS, LAYOUTS, EN, RU, NORMAL, UPPER,
-  CAPS_LOCK, ENTER, BACKSPACE, SHIFT_LEFT, SHIFT_RIGHT,
-  ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, SPACE,
+  KEY_ITEMS,
+  LAYOUTS,
+  EN,
+  RU,
+  NORMAL,
+  UPPER,
+  CAPS_LOCK,
+  ENTER,
+  BACKSPACE,
+  SHIFT_LEFT,
+  SHIFT_RIGHT,
+  ARROW_UP,
+  ARROW_DOWN,
+  ARROW_LEFT,
+  ARROW_RIGHT,
+  SPACE,
 } from './constants.js';
 
 const LANGUAGE_SETTINGS_KEY = 'codejam-keyboard';
@@ -51,7 +64,7 @@ class Keyboard {
       const btn = event.target.closest('.keyboard__key');
       if (!btn) return;
 
-      if (this._isShiftKey(btn.id)) {
+      if (Keyboard._isShiftKey(btn.id)) {
         this._isShiftOn = true;
         this._switchUpperCase();
       }
@@ -61,7 +74,7 @@ class Keyboard {
       const btn = event.target.closest('.keyboard__key');
       if (!btn) return;
 
-      if (this._isShiftKey(btn.id)) {
+      if (Keyboard._isShiftKey(btn.id)) {
         this._isShiftOn = false;
         this._switchUpperCase();
       }
@@ -71,7 +84,7 @@ class Keyboard {
       const btn = event.target.closest('.keyboard__key');
       if (!btn) return;
 
-      this._keyAnimate(btn);
+      Keyboard._keyAnimate(btn);
       this._handleActivatedKey(btn, btn.id);
     });
   }
@@ -81,11 +94,11 @@ class Keyboard {
       const btn = document.getElementById(event.code);
       if (!btn) return;
 
-      this._keyAnimateOn(btn);
+      Keyboard._keyAnimateOn(btn);
 
       if (event.shiftKey && event.altKey) {
         this._toggleLanguage();
-      } else if (this._isShiftKey(event.key)) {
+      } else if (Keyboard._isShiftKey(event.key)) {
         this._isShiftOn = true;
         this._switchUpperCase();
       } else {
@@ -99,9 +112,9 @@ class Keyboard {
       const btn = document.getElementById(event.code);
       if (!btn) return;
 
-      this._keyAnimateOff(btn);
+      Keyboard._keyAnimateOff(btn);
 
-      if (this._isShiftKey(event.key)) {
+      if (Keyboard._isShiftKey(event.key)) {
         this._isShiftOn = false;
         this._switchUpperCase();
       }
@@ -124,16 +137,16 @@ class Keyboard {
     }
   }
 
-  _keyAnimate(btn) {
-    this._keyAnimateOn(btn);
-    setTimeout(() => this._keyAnimateOff(btn), 200);
+  static _keyAnimate(btn) {
+    Keyboard._keyAnimateOn(btn);
+    setTimeout(() => Keyboard._keyAnimateOff(btn), 200);
   }
 
-  _keyAnimateOn(btn) {
+  static _keyAnimateOn(btn) {
     btn.classList.add('keyboard__key_clicked');
   }
 
-  _keyAnimateOff(btn) {
+  static _keyAnimateOff(btn) {
     btn.classList.remove('keyboard__key_clicked');
   }
 
@@ -142,13 +155,13 @@ class Keyboard {
     if (start < this._textInput.value.length) {
       this._textInput.value = this._textInput.value.slice(0, start)
         + this._textInput.value.slice(start + 1);
+
       this._textInput.selectionStart = start;
     }
   }
 
   _onclickBackspace() {
-    this._textInput.value = this._textInput.value
-      .slice(0, this._textInput.value.length - 1);
+    this._textInput.value = this._textInput.value.slice(0, this._textInput.value.length - 1);
   }
 
   _onclickEnter() {
@@ -161,7 +174,7 @@ class Keyboard {
   }
 
   _onclickArrow(btn) {
-    this._textInput.value += this._getPseudoSymbol(btn.id);
+    this._textInput.value += Keyboard._getPseudoSymbol(btn.id);
   }
 
   _onclickPrintableSymbol(keyCode) {
@@ -203,7 +216,13 @@ class Keyboard {
 
       itemBtn.id = itemKey;
       itemBtn.classList.add(KEY_CLASS);
-      itemBtn.textContent = itemValue.defaultKey || this._getKey(itemKey);
+
+      if (Keyboard._isMaterialIconKey(itemValue)) {
+        const htmlIcon = Keyboard._getMaterialIcon(itemKey);
+        itemBtn.innerHTML = htmlIcon;
+      } else {
+        itemBtn.textContent = itemValue.defaultKey || this._getKey(itemKey);
+      }
 
       this._adjustButtonsAppearance(itemKey, itemValue, itemBtn);
     });
@@ -214,13 +233,8 @@ class Keyboard {
   }
 
   _adjustButtonsAppearance(itemKey, itemValue, itemBtn) {
-    if (this._isLargeButtonKey(itemValue)) {
-      this._arrangeLargeButtons(itemBtn);
-    }
-
-    if (this._isMaterialIconKey(itemValue)) {
-      const htmlIcon = this._getMaterialIcon(itemKey);
-      itemBtn.innerHTML = htmlIcon;
+    if (Keyboard._isLargeButtonKey(itemValue)) {
+      Keyboard._arrangeLargeButtons(itemBtn);
     }
 
     if (itemKey === CAPS_LOCK) {
@@ -229,32 +243,32 @@ class Keyboard {
       }
     }
 
-    if (this._isPrintableKey(itemValue)) {
+    if (Keyboard._isPrintableKey(itemValue)) {
       itemBtn.classList.add(PRINTABLE_KEY_CLASS);
     }
   }
 
-  _isPrintableKey(itemValue) {
-    return this._hasFlag(itemValue, PRINTABLE_FLAG);
+  static _isPrintableKey(itemValue) {
+    return Keyboard._hasFlag(itemValue, PRINTABLE_FLAG);
   }
 
-  _isMaterialIconKey(itemValue) {
-    return this._hasFlag(itemValue, MATERIAL_ICON_FLAG);
+  static _isMaterialIconKey(itemValue) {
+    return Keyboard._hasFlag(itemValue, MATERIAL_ICON_FLAG);
   }
 
-  _isLargeButtonKey(itemValue) {
-    return this._hasFlag(itemValue, LARGE_BUTTON_FLAG);
+  static _isLargeButtonKey(itemValue) {
+    return Keyboard._hasFlag(itemValue, LARGE_BUTTON_FLAG);
   }
 
-  _isShiftKey(keyCode) {
+  static _isShiftKey(keyCode) {
     return keyCode === SHIFT_LEFT || keyCode === SHIFT_RIGHT;
   }
 
-  _hasFlag(itemValue, flag) {
-    return (itemValue.flags.includes(flag));
+  static _hasFlag(itemValue, flag) {
+    return itemValue.flags.includes(flag);
   }
 
-  _getMaterialIcon(keyId) {
+  static _getMaterialIcon(keyId) {
     const codes = {
       [BACKSPACE]: 'keyboard_backspace',
       [CAPS_LOCK]: 'keyboard_capslock',
@@ -268,7 +282,7 @@ class Keyboard {
     return `<i class="material-icons">${codes[keyId]}</i>`;
   }
 
-  _arrangeLargeButtons(itemBtn) {
+  static _arrangeLargeButtons(itemBtn) {
     const map = {
       [BACKSPACE]: '-backspace',
       [CAPS_LOCK]: '-capslock',
@@ -281,7 +295,7 @@ class Keyboard {
     itemBtn.classList.add(`${KEY_CLASS}${map[itemBtn.id]}`);
   }
 
-  _getPseudoSymbol(btnId) {
+  static _getPseudoSymbol(btnId) {
     const PSEUDO_KEYS = {
       [ARROW_UP]: '▲',
       [ARROW_DOWN]: '▼',
@@ -329,7 +343,7 @@ class Keyboard {
 
   /* #region  Settings */
 
-  _createDefaultSettings() {
+  static _createDefaultSettings() {
     return {
       lang: EN,
       capsLockOn: false,
@@ -339,7 +353,7 @@ class Keyboard {
   _readSettings() {
     let settings = JSON.parse(localStorage.getItem(LANGUAGE_SETTINGS_KEY));
     if (!settings) {
-      settings = this._createDefaultSettings();
+      settings = Keyboard._createDefaultSettings();
     }
 
     this._currentLanguage = settings.lang;
