@@ -1,9 +1,7 @@
-import KEY_ITEMS from './constants.js';
-import KEYBOARD_LAYOUTS from './keyboardLayouts.js';
+import {
+  KEY_ITEMS, LAYOUTS, EN, RU, NORMAL, UPPER,
+} from './constants.js';
 
-const RU = 'Ru';
-const EN = 'En';
-const UPPER = 'Upper';
 const LANGUAGE_SETTINGS_KEY = 'lang';
 
 const PRINTABLE_FLAG = 'isPrintable';
@@ -35,7 +33,7 @@ class Keyboard {
 
       itemBtn.id = itemKey;
       itemBtn.classList.add('keyboard__key');
-      itemBtn.textContent = itemValue.defaultKey || this._getLayoutKey(itemKey);
+      itemBtn.textContent = itemValue.defaultKey || this._getKey(itemKey);
 
       this._adjustButtonsAppearance(itemKey, itemValue, itemBtn);
     });
@@ -50,6 +48,8 @@ class Keyboard {
   //-----------------
   // Private methods
   //-----------------
+
+  /* #region  Event Handlers */
 
   _addEventHandlers(keyboardDiv) {
     keyboardDiv.addEventListener('mousedown', (event) => {
@@ -126,6 +126,56 @@ class Keyboard {
       this._onclickPrintableSymbol(keyCode);
     }
   }
+
+  _keyAnimate(btn) {
+    this._keyAnimateOn(btn);
+    setTimeout(() => this._keyAnimateOff(btn), 200);
+  }
+
+  _keyAnimateOn(btn) {
+    btn.classList.add('keyboard__key_clicked');
+  }
+
+  _keyAnimateOff(btn) {
+    btn.classList.remove('keyboard__key_clicked');
+  }
+
+  _onclickDelete() {
+    const start = this._textInput.selectionStart;
+    if (start < this._textInput.value.length) {
+      this._textInput.value = this._textInput.value.slice(0, start)
+        + this._textInput.value.slice(start + 1);
+      this._textInput.selectionStart = start;
+    }
+  }
+
+  _onclickBackspace() {
+    this._textInput.value = this._textInput.value
+      .slice(0, this._textInput.value.length - 1);
+  }
+
+  _onclickEnter() {
+    this._textInput.value += '\r\n';
+  }
+
+  _onclickCapsLock(capsLockBtn) {
+    this._isCapsLockOn = !this._isCapsLockOn;
+    capsLockBtn.classList.toggle('keyboard__key-capslock_on');
+    this._switchUpperCase();
+  }
+
+  _onclickArrow(btn) {
+    this._textInput.value += this._getPseudoSymbol(btn.id);
+  }
+
+  _onclickPrintableSymbol(keyCode) {
+    const symbol = this._getKey(keyCode);
+    this._textInput.value += symbol;
+  }
+
+  /* #endregion */
+
+  /* #region  DOM Creation */
 
   _createMainContainer() {
     const main = document.createElement('main');
@@ -213,14 +263,9 @@ class Keyboard {
     if (key) return key; return '';
   }
 
-  _getLayoutKey(keyId) {
-    const layout = this._getCurrentLayout();
-    return layout[keyId];
-  }
+  /* #endregion */
 
-  _getCurrentLayout() {
-    return KEYBOARD_LAYOUTS[this._currentLanguage + (this._isUpperCase ? UPPER : '')];
-  }
+  /* #region  Switch language and uppercase */
 
   _toggleLanguage() {
     this._currentLanguage = this._currentLanguage === EN ? RU : EN;
@@ -228,12 +273,27 @@ class Keyboard {
     this._saveSettings();
   }
 
+  _getCurrentLayout() {
+    return LAYOUTS[this._currentLanguage];
+  }
+
+  _getLayoutProp() {
+    return this._isUpperCase ? UPPER : NORMAL;
+  }
+
+  _getKey(keyId, layout) {
+    layout = layout || this._getCurrentLayout();
+    const prop = this._getLayoutProp();
+    return layout[keyId][prop];
+  }
+
   _readPrintableButtonKeys() {
     const layout = this._getCurrentLayout();
 
     document.querySelectorAll('.keyboard__key-printable')
-      .forEach((printableBtn) => {
-        printableBtn.textContent = layout[printableBtn.id];
+      .forEach((btn) => {
+        const key = this._getKey(btn.id, layout);
+        btn.textContent = key;
       });
   }
 
@@ -246,51 +306,9 @@ class Keyboard {
     }
   }
 
-  _keyAnimate(btn) {
-    this._keyAnimateOn(btn);
-    setTimeout(() => this._keyAnimateOff(btn), 200);
-  }
+  /* #endregion */
 
-  _keyAnimateOn(btn) {
-    btn.classList.add('keyboard__key_clicked');
-  }
-
-  _keyAnimateOff(btn) {
-    btn.classList.remove('keyboard__key_clicked');
-  }
-
-  _onclickDelete() {
-    const start = this._textInput.selectionStart;
-    if (start < this._textInput.value.length) {
-      this._textInput.value = this._textInput.value.slice(0, start)
-        + this._textInput.value.slice(start + 1);
-      this._textInput.selectionStart = start;
-    }
-  }
-
-  _onclickBackspace() {
-    this._textInput.value = this._textInput.value
-      .slice(0, this._textInput.value.length - 1);
-  }
-
-  _onclickEnter() {
-    this._textInput.value += '\r\n';
-  }
-
-  _onclickCapsLock(capsLockBtn) {
-    this._isCapsLockOn = !this._isCapsLockOn;
-    capsLockBtn.classList.toggle('keyboard__key-capslock_on');
-    this._switchUpperCase();
-  }
-
-  _onclickArrow(btn) {
-    this._textInput.value += this._getPseudoSymbol(btn.id);
-  }
-
-  _onclickPrintableSymbol(keyCode) {
-    const symbol = this._getLayoutKey(keyCode);
-    this._textInput.value += symbol;
-  }
+  /* #region  Settings */
 
   _readSettings() {
     let lang = localStorage.getItem(LANGUAGE_SETTINGS_KEY);
@@ -301,6 +319,8 @@ class Keyboard {
   _saveSettings() {
     localStorage.setItem(LANGUAGE_SETTINGS_KEY, this._currentLanguage);
   }
+
+  /* #endregion */
 }
 
 window.addEventListener('DOMContentLoaded', () => {
