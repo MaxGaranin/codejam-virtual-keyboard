@@ -113,7 +113,7 @@ const EN_LAYOUT = {
   Comma: { normal: ',', upper: '<' },
   Period: { normal: '.', upper: '>' },
   Slash: { normal: '/', upper: '?' },
-  Space: { normal: ' ', upper: ' { ' },
+  Space: { normal: ' ', upper: ' ' },
 };
 
 const RU_LAYOUT = {

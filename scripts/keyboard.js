@@ -2,7 +2,7 @@ import {
   KEY_ITEMS, LAYOUTS, EN, RU, NORMAL, UPPER,
 } from './constants.js';
 
-const LANGUAGE_SETTINGS_KEY = 'lang';
+const LANGUAGE_SETTINGS_KEY = 'codejam-keyboard';
 
 const PRINTABLE_FLAG = 'isPrintable';
 const MATERIAL_ICON_FLAG = 'isMaterialIcon';
@@ -10,48 +10,32 @@ const LARGE_BUTTON_FLAG = 'isLargeBtn';
 
 class Keyboard {
   constructor() {
-    this._currentLanguage = 'En';
-    this._currentLanguageKeys = [];
+    this._main = null;
+    this._currentLanguage = EN;
+    this._currentLayout = LAYOUTS[EN];
     this._textInput = '';
-    this._keyItems = [];
     this._isUpperCase = false;
     this._isCapsLockOn = false;
     this._isShiftOn = false;
   }
 
   init() {
-    this._readSettings();
+    this._main = this._createMainContainer();
+    document.body.append(this._main);
 
-    const keyboardDiv = document.createElement('div');
-    keyboardDiv.className = 'keyboard';
-
-    this._keyItems = KEY_ITEMS;
-
-    Object.entries(this._keyItems).forEach(([itemKey, itemValue]) => {
-      const itemBtn = document.createElement('button');
-      keyboardDiv.append(itemBtn);
-
-      itemBtn.id = itemKey;
-      itemBtn.classList.add('keyboard__key');
-      itemBtn.textContent = itemValue.defaultKey || this._getKey(itemKey);
-
-      this._adjustButtonsAppearance(itemKey, itemValue, itemBtn);
-    });
-
-    this._addEventHandlers(keyboardDiv);
-
-    const main = this._createMainContainer();
-    main.append(keyboardDiv);
-    document.body.append(main);
+    this._updateKeyboard();
+    this._addKeysEventHandlers();
   }
 
   //-----------------
   // Private methods
   //-----------------
 
+  /* #endregion */
+
   /* #region  Event Handlers */
 
-  _addEventHandlers(keyboardDiv) {
+  _addMouseEventHandlers(keyboardDiv) {
     keyboardDiv.addEventListener('mousedown', (event) => {
       const btn = event.target.closest('.keyboard__key');
       if (!btn) return;
@@ -79,7 +63,9 @@ class Keyboard {
       this._keyAnimate(btn);
       this._handleActivatedKey(btn, btn.id);
     });
+  }
 
+  _addKeysEventHandlers() {
     document.addEventListener('keydown', (event) => {
       const btn = document.getElementById(event.code);
       if (!btn) return;
@@ -162,6 +148,7 @@ class Keyboard {
     this._isCapsLockOn = !this._isCapsLockOn;
     capsLockBtn.classList.toggle('keyboard__key-capslock_on');
     this._switchUpperCase();
+    this._saveSettings();
   }
 
   _onclickArrow(btn) {
@@ -175,7 +162,7 @@ class Keyboard {
 
   /* #endregion */
 
-  /* #region  DOM Creation */
+  /* #region  Create DOM */
 
   _createMainContainer() {
     const main = document.createElement('main');
@@ -187,6 +174,41 @@ class Keyboard {
     this._textInput = textInput;
 
     return main;
+  }
+
+  _updateKeyboard() {
+    this._readSettings();
+
+    const prevKeyboard = document.querySelector('.keyboard');
+    if (prevKeyboard) prevKeyboard.remove();
+
+    const keyboard = this._createKeyboard();
+    this._main.append(keyboard);
+
+    const capsLockBtn = document.getElementById('CapsLock');
+    if (this._isCapsLockOn) {
+      capsLockBtn.classList.add('keyboard__key-capslock_on');
+    }
+  }
+
+  _createKeyboard() {
+    const keyboard = document.createElement('div');
+    keyboard.className = 'keyboard';
+
+    Object.entries(KEY_ITEMS).forEach(([itemKey, itemValue]) => {
+      const itemBtn = document.createElement('button');
+      keyboard.append(itemBtn);
+
+      itemBtn.id = itemKey;
+      itemBtn.classList.add('keyboard__key');
+      itemBtn.textContent = itemValue.defaultKey || this._getKey(itemKey);
+
+      this._adjustButtonsAppearance(itemKey, itemValue, itemBtn);
+    });
+
+    this._addMouseEventHandlers(keyboard);
+
+    return keyboard;
   }
 
   _adjustButtonsAppearance(itemKey, itemValue, itemBtn) {
@@ -260,7 +282,7 @@ class Keyboard {
     };
 
     const key = PSEUDO_KEYS[btnId];
-    if (key) return key; return '';
+    return key || '';
   }
 
   /* #endregion */
@@ -269,30 +291,24 @@ class Keyboard {
 
   _toggleLanguage() {
     this._currentLanguage = this._currentLanguage === EN ? RU : EN;
-    this._readPrintableButtonKeys();
+    this._currentLayout = LAYOUTS[this._currentLanguage];
     this._saveSettings();
-  }
-
-  _getCurrentLayout() {
-    return LAYOUTS[this._currentLanguage];
+    this._updateKeyboard();
   }
 
   _getLayoutProp() {
     return this._isUpperCase ? UPPER : NORMAL;
   }
 
-  _getKey(keyId, layout) {
-    layout = layout || this._getCurrentLayout();
+  _getKey(keyId) {
     const prop = this._getLayoutProp();
-    return layout[keyId][prop];
+    return this._currentLayout[keyId][prop];
   }
 
   _readPrintableButtonKeys() {
-    const layout = this._getCurrentLayout();
-
     document.querySelectorAll('.keyboard__key-printable')
       .forEach((btn) => {
-        const key = this._getKey(btn.id, layout);
+        const key = this._getKey(btn.id, this._currentLayout);
         btn.textContent = key;
       });
   }
@@ -302,7 +318,7 @@ class Keyboard {
     this._isUpperCase = this._isShiftOn !== this._isCapsLockOn;
 
     if (prevIsUpperCase !== this._isUpperCase) {
-      this._readPrintableButtonKeys();
+      this._updateKeyboard();
     }
   }
 
@@ -310,14 +326,30 @@ class Keyboard {
 
   /* #region  Settings */
 
+  _createDefaultSettings() {
+    return {
+      lang: EN,
+      capsLockOn: false,
+    };
+  }
+
   _readSettings() {
-    let lang = localStorage.getItem(LANGUAGE_SETTINGS_KEY);
-    if (!lang) lang = EN;
-    this._currentLanguage = lang;
+    let settings = JSON.parse(localStorage.getItem(LANGUAGE_SETTINGS_KEY));
+    if (!settings) {
+      settings = this._createDefaultSettings();
+    }
+
+    this._currentLanguage = settings.lang;
+    this._isCapsLockOn = settings.capsLockOn;
   }
 
   _saveSettings() {
-    localStorage.setItem(LANGUAGE_SETTINGS_KEY, this._currentLanguage);
+    const settings = {
+      lang: this._currentLanguage,
+      capsLockOn: this._isCapsLockOn,
+    };
+
+    localStorage.setItem(LANGUAGE_SETTINGS_KEY, JSON.stringify(settings));
   }
 
   /* #endregion */
