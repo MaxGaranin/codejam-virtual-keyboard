@@ -57,7 +57,7 @@ const KEY_ITEMS = [
   { id: 'ControlLeft', defaultKey: 'Ctrl', flags: [] },
   { id: 'MetaLeft', defaultKey: 'Win', flags: [] },
   { id: 'AltLeft', defaultKey: 'Alt', flags: [] },
-  { id: 'Space', flags: ['isLargeBtn'] },
+  { id: 'Space', flags: ['isPrintable', 'isLargeBtn'] },
   { id: 'AltRight', defaultKey: 'Alt', flags: [] },
   { id: 'ArrowLeft', flags: ['isMaterialIcon'] },
   { id: 'ArrowDown', flags: ['isMaterialIcon'] },

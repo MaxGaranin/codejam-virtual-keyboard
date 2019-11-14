@@ -46,6 +46,7 @@ const EN_LAYOUT = {
   Comma: ',',
   Period: '.',
   Slash: '/',
+  Space: ' ',
 };
 
 const EN_UPPER_LAYOUT = {
@@ -96,6 +97,7 @@ const EN_UPPER_LAYOUT = {
   Comma: '<',
   Period: '>',
   Slash: '?',
+  Space: ' ',
 };
 
 const RU_LAYOUT = {
@@ -146,6 +148,7 @@ const RU_LAYOUT = {
   Comma: 'б',
   Period: 'ю',
   Slash: '.',
+  Space: ' ',
 };
 
 const RU_UPPER_LAYOUT = {
@@ -196,6 +199,7 @@ const RU_UPPER_LAYOUT = {
   Comma: 'Б',
   Period: 'Ю',
   Slash: ',',
+  Space: ' ',
 };
 
 export default {

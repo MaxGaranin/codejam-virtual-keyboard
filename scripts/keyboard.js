@@ -36,7 +36,7 @@ class Keyboard {
         this._arrangeLargeButtons(itemBtn);
       }
 
-      itemBtn.textContent = item.defaultKey || this._getLocalizedKey(item.id);
+      itemBtn.textContent = item.defaultKey || this._getLayoutKey(item.id);
 
       if (this._hasFlag(item, 'isMaterialIcon')) {
         const htmlIcon = this._getMaterialIcon(item.id);
@@ -46,35 +46,52 @@ class Keyboard {
       if (this._hasFlag(item, 'isPrintable')) {
         itemBtn.classList.add('keyboard__key-printable');
       }
+    });
 
-      // Event handlers
-      itemBtn.addEventListener('mousedown', (event) => {
-        const btn = event.target;
-        if (this._isShiftKey(btn.id)) {
-          this._isShiftOn = true;
-          this._switchUpperCase();
-        }
-      });
+    this._addEventHandlers(keyboardDiv);
 
-      itemBtn.addEventListener('mouseup', (event) => {
-        const btn = event.target;
-        if (this._isShiftKey(btn.id)) {
-          this._isShiftOn = false;
-          this._switchUpperCase();
-        }
-      });
+    const main = this._createMainContainer();
+    main.append(keyboardDiv);
+    document.body.append(main);
+  }
 
-      itemBtn.addEventListener('click', (event) => {
-        const btn = event.currentTarget;
-        this._keyAnimate(btn);
+  //-----------------
+  // Private methods
+  //-----------------
 
-        this._handleActivatedKey(btn, btn.id);
-      });
+  _addEventHandlers(keyboardDiv) {
+    keyboardDiv.addEventListener('mousedown', (event) => {
+      const btn = event.target.closest('.keyboard__key');
+      if (!btn) return;
+
+      if (this._isShiftKey(btn.id)) {
+        this._isShiftOn = true;
+        this._switchUpperCase();
+      }
+    });
+
+    keyboardDiv.addEventListener('mouseup', (event) => {
+      const btn = event.target.closest('.keyboard__key');
+      if (!btn) return;
+
+      if (this._isShiftKey(btn.id)) {
+        this._isShiftOn = false;
+        this._switchUpperCase();
+      }
+    });
+
+    keyboardDiv.addEventListener('click', (event) => {
+      const btn = event.target.closest('.keyboard__key');
+      if (!btn) return;
+
+      this._keyAnimate(btn);
+      this._handleActivatedKey(btn, btn.id);
     });
 
     document.addEventListener('keydown', (event) => {
       const btn = document.getElementById(event.code);
       if (!btn) return;
+
       this._keyAnimateOn(btn);
 
       if (event.shiftKey && event.altKey) {
@@ -92,6 +109,7 @@ class Keyboard {
     document.addEventListener('keyup', (event) => {
       const btn = document.getElementById(event.code);
       if (!btn) return;
+
       this._keyAnimateOff(btn);
 
       if (this._isShiftKey(event.key)) {
@@ -99,13 +117,7 @@ class Keyboard {
         this._switchUpperCase();
       }
     });
-
-    const main = this._createMainContainer();
-    main.append(keyboardDiv);
-    document.body.append(main);
   }
-
-  // Methods
 
   _createMainContainer() {
     const main = document.createElement('main');
@@ -182,7 +194,7 @@ class Keyboard {
     if (key) return key; return '';
   }
 
-  _getLocalizedKey(keyId) {
+  _getLayoutKey(keyId) {
     const layout = this._getCurrentLayout();
     return layout[keyId];
   }
@@ -258,7 +270,7 @@ class Keyboard {
   }
 
   _onclickPrintableSymbol(keyCode) {
-    const symbol = this._getLocalizedKey(keyCode);
+    const symbol = this._getLayoutKey(keyCode);
     this._textInput.value += symbol;
   }
 
