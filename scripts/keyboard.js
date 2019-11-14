@@ -20,18 +20,22 @@ class Keyboard {
   }
 
   init() {
+    this._readSettings();
+
     this._main = this._createMainContainer();
     document.body.append(this._main);
 
     this._updateKeyboard();
     this._addKeysEventHandlers();
+
+    window.addEventListener('unload', () => {
+      this._saveSettings();
+    });
   }
 
   //-----------------
   // Private methods
   //-----------------
-
-  /* #endregion */
 
   /* #region  Event Handlers */
 
@@ -105,7 +109,7 @@ class Keyboard {
     } else if (keyCode === 'Delete') {
       this._onclickDelete();
     } else if (keyCode === 'CapsLock') {
-      this._onclickCapsLock(btn);
+      this._onclickCapsLock();
     } else if (keyCode.includes('Arrow')) {
       this._onclickArrow(btn);
     } else if (btn.classList.contains('keyboard__key-printable')) {
@@ -144,11 +148,9 @@ class Keyboard {
     this._textInput.value += '\r\n';
   }
 
-  _onclickCapsLock(capsLockBtn) {
+  _onclickCapsLock() {
     this._isCapsLockOn = !this._isCapsLockOn;
-    capsLockBtn.classList.toggle('keyboard__key-capslock_on');
     this._switchUpperCase();
-    this._saveSettings();
   }
 
   _onclickArrow(btn) {
@@ -177,18 +179,11 @@ class Keyboard {
   }
 
   _updateKeyboard() {
-    this._readSettings();
-
     const prevKeyboard = document.querySelector('.keyboard');
     if (prevKeyboard) prevKeyboard.remove();
 
     const keyboard = this._createKeyboard();
     this._main.append(keyboard);
-
-    const capsLockBtn = document.getElementById('CapsLock');
-    if (this._isCapsLockOn) {
-      capsLockBtn.classList.add('keyboard__key-capslock_on');
-    }
   }
 
   _createKeyboard() {
@@ -219,6 +214,12 @@ class Keyboard {
     if (this._isMaterialIconKey(itemValue)) {
       const htmlIcon = this._getMaterialIcon(itemKey);
       itemBtn.innerHTML = htmlIcon;
+    }
+
+    if (itemKey === 'CapsLock') {
+      if (this._isCapsLockOn) {
+        itemBtn.classList.add('keyboard__key-capslock_on');
+      }
     }
 
     if (this._isPrintableKey(itemValue)) {
@@ -292,7 +293,6 @@ class Keyboard {
   _toggleLanguage() {
     this._currentLanguage = this._currentLanguage === EN ? RU : EN;
     this._currentLayout = LAYOUTS[this._currentLanguage];
-    this._saveSettings();
     this._updateKeyboard();
   }
 
@@ -313,9 +313,13 @@ class Keyboard {
       });
   }
 
+  _calcIsUpperCase() {
+    return this._isShiftOn !== this._isCapsLockOn;
+  }
+
   _switchUpperCase() {
     const prevIsUpperCase = this._isUpperCase;
-    this._isUpperCase = this._isShiftOn !== this._isCapsLockOn;
+    this._isUpperCase = this._calcIsUpperCase();
 
     if (prevIsUpperCase !== this._isUpperCase) {
       this._updateKeyboard();
@@ -340,7 +344,10 @@ class Keyboard {
     }
 
     this._currentLanguage = settings.lang;
+    this._currentLayout = LAYOUTS[this._currentLanguage];
+
     this._isCapsLockOn = settings.capsLockOn;
+    this._isUpperCase = this._calcIsUpperCase();
   }
 
   _saveSettings() {
