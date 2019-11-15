@@ -45,7 +45,7 @@ class Keyboard {
     this._main = this._createMainContainer();
     document.body.append(this._main);
 
-    this._updateKeyboard();
+    this._appendKeyboard();
     this._addKeysEventHandlers();
 
     window.addEventListener('unload', () => {
@@ -204,6 +204,10 @@ class Keyboard {
     const prevKeyboard = document.querySelector(`.${KEYBOARD_CLASS}`);
     if (prevKeyboard) prevKeyboard.remove();
 
+    this._appendKeyboard();
+  }
+
+  _appendKeyboard() {
     const keyboard = this._createKeyboard();
     this._main.append(keyboard);
   }
