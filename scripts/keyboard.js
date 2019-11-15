@@ -98,9 +98,11 @@ class Keyboard {
 
       if (event.shiftKey && event.altKey) {
         this._toggleLanguage();
-      } else if (Keyboard._isShiftKey(event.key)) {
-        this._isShiftOn = true;
-        this._switchUpperCase();
+      } else if (Keyboard._isShiftKey(event.code)) {
+        if (!this._isShiftOn) {
+          this._isShiftOn = true;
+          this._switchUpperCase();
+        }
       } else {
         this._handleActivatedKey(btn, event.code);
       }
@@ -114,7 +116,7 @@ class Keyboard {
 
       Keyboard._keyAnimateOff(btn);
 
-      if (Keyboard._isShiftKey(event.key)) {
+      if (Keyboard._isShiftKey(event.code)) {
         this._isShiftOn = false;
         this._switchUpperCase();
       }
