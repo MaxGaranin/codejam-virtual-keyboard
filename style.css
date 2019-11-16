@@ -1,0 +1,136 @@
+* {
+  margin: 0;
+}
+
+.main-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.text-input {
+  -webkit-box-flex: 300px;
+      -ms-flex: 300px 1 1;
+          flex: 300px 1 1;
+  width: 700px;
+  margin-top: 50px;
+}
+
+.keyboard {
+  -webkit-box-flex: 250px;
+      -ms-flex: 250px 0 0px;
+          flex: 250px 0 0;
+  width: 700px;
+  margin-top: 50px;
+  border: 1px solid lightgray;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-grid-columns: (40px)[15];
+      grid-template-columns: repeat(15, 40px);
+  -ms-grid-rows: (40px)[5];
+      grid-template-rows: repeat(5, 40px);
+  grid-row-gap: 5px;
+  grid-column-gap: 5px;
+}
+
+.keyboard__key {
+  background: yellowgreen;
+  color: blue;
+  border: 1px solid green;
+  border-radius: 5px;
+  outline: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-transition: background-color 0.5s, border-radius 0.1s;
+  transition: background-color 0.5s, border-radius 0.1s;
+}
+
+.keyboard__key:hover {
+  cursor: pointer;
+}
+
+.keyboard__key_clicked {
+  background: gray;
+  border-radius: 15px;
+}
+
+.keyboard__key_uppercase {
+  text-transform: uppercase;
+}
+
+.keyboard__key-backspace {
+  -ms-grid-column: 14;
+  -ms-grid-column-span: 2;
+  grid-column: 14 / span 2;
+}
+
+.keyboard__key-capslock {
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-column: 1 / span 2;
+  position: relative;
+}
+
+.keyboard__key-capslock::after {
+  content: '';
+  top: 10px;
+  right: 10px;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+}
+
+.keyboard__key-capslock_on::after {
+  background: blue;
+}
+
+.keyboard__key-enter {
+  -ms-grid-column: 14;
+  -ms-grid-column-span: 2;
+  grid-column: 14 / span 2;
+}
+
+.keyboard__key-left-shift {
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-column: 1 / span 2;
+}
+
+.keyboard__key-right-shift {
+  -ms-grid-column: 14;
+  -ms-grid-column-span: 2;
+  grid-column: 14 / span 2;
+}
+
+.keyboard__key-space {
+  -ms-grid-column: 4;
+  -ms-grid-column-span: 7;
+  grid-column: 4 / span 7;
+}
+/*# sourceMappingURL=style.css.map */
